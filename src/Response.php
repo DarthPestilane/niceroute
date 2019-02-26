@@ -7,6 +7,8 @@ use Symfony\Component\HttpFoundation\Response as BaseResponse;
 class Response extends BaseResponse
 {
     /**
+     * Perform a application/json response.
+     *
      * @param array|null $content
      * @param int $status
      * @return Response

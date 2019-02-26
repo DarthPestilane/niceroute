@@ -7,11 +7,11 @@ namespace NiceRoute;
  * Class Route
  * @package NiceRoute
  *
- * @method get(String $pattern, \Closure $handler, array $attributes = [])
- * @method post(String $pattern, \Closure $handler, array $attributes = [])
- * @method put(String $pattern, \Closure $handler, array $attributes = [])
- * @method patch(String $pattern, \Closure $handler, array $attributes = [])
- * @method delete(String $pattern, \Closure $handler, array $attributes = [])
+ * @method get(string $pattern, \Closure $handler, array $attributes = [])
+ * @method post(string $pattern, \Closure $handler, array $attributes = [])
+ * @method put(string $pattern, \Closure $handler, array $attributes = [])
+ * @method patch(string $pattern, \Closure $handler, array $attributes = [])
+ * @method delete(string $pattern, \Closure $handler, array $attributes = [])
  */
 class Route
 {
@@ -84,7 +84,7 @@ class Route
         return clone $this;
     }
 
-    private function mergePrefix(String $uri = '')
+    private function mergePrefix(string $uri = '')
     {
         $uri = trim($uri, '/');
 
@@ -96,7 +96,7 @@ class Route
         return '/' . trim($p . '/' . $uri, '/');
     }
 
-    private function add(String $method, String $pattern, \Closure $handler, array $attributes = [])
+    private function add(string $method, string $pattern, \Closure $handler, array $attributes = [])
     {
         $this->method = $method;
         $this->pattern = $this->mergePrefix($pattern);
@@ -156,12 +156,12 @@ class Route
     /**
      * Match regex with given $uri.
      *
-     * @param String $uri
+     * @param string $uri
      * @return array
      */
-    public function matches(String $uri): array
+    public function matches(string $uri): array
     {
-        $regex = $this->buildRegex();
+        $regex = $this->regex;
         $find = !!preg_match($regex, rawurldecode($uri), $matches);
         if ($find) {
             array_shift($matches);

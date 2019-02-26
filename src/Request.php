@@ -53,7 +53,7 @@ class Request extends BaseRequest
      * @param null $default
      * @return mixed
      */
-    public function input(String $key = null, $default = null)
+    public function input(string $key = null, $default = null)
     {
         if ($this->json !== null) {
             return $this->json->get($key, $default);
@@ -61,16 +61,32 @@ class Request extends BaseRequest
         return $this->get($key, $default);
     }
 
-    public function param(String $key): String
+    /**
+     * Retrieve route parameter.
+     *
+     * @param string $key
+     * @return string
+     */
+    public function param(string $key): string
     {
         return $this->params[$key];
     }
 
+    /**
+     * Retrieve all route parameters
+     *
+     * @return array
+     */
     public function params(): array
     {
         return $this->params;
     }
 
+    /**
+     * Set route parameters.
+     *
+     * @param array $params
+     */
     public function setParams(array $params = [])
     {
         $this->params = $params;

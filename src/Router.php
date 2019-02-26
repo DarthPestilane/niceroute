@@ -30,10 +30,10 @@ class Router
     /**
      * Add route.
      *
-     * @param String $name
+     * @param string $name
      * @param Route $route
      */
-    public static function addRoute(String $name, Route $route)
+    public static function addRoute(string $name, Route $route)
     {
         static::$routeMap[$name] = $route;
     }
@@ -100,7 +100,7 @@ class Router
     private function match()
     {
         $method = $this->request->getMethod();
-        $uri = $this->request->getPathInfo(); // without query string
+        $uri = '/' . trim($this->request->getPathInfo(), '/'); // without query string
 
         // completely match
         $name = $method . '-' . $uri;
