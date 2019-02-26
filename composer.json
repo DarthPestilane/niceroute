@@ -1,0 +1,24 @@
+{
+    "name": "barbie/echo",
+    "authors": [
+        {
+            "name": "DarthPestline",
+            "email": "wangrui.superman@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/http-foundation": "^4.2",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "NiceRoute\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\": "test/",
+            "Example\\": "example/"
+        }
+    }
+}
