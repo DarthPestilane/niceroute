@@ -18,7 +18,7 @@ final class RouteTest extends TestCase
         $this->assertEquals(['foo', 'bar'], $ph);
     }
 
-    public function testAdd()
+    public function testRegistry()
     {
         $route = new Route();
         $route->get('/foo/bar', function () {
@@ -41,7 +41,7 @@ final class RouteTest extends TestCase
         $this->assertEquals(true, $find);
     }
 
-    public function testMatchesRegex()
+    public function testMatchesPlaceholders()
     {
         $route = new Route();
         $route->get('/foo/{foo}/bar/{bar}', function () {
