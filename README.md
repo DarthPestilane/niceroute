@@ -14,6 +14,8 @@ Here you are!
 
 ## Usage
 
+There are some example code in `example` directory.
+
 ### Basic one
 
 We will registry all our routes in `\NiceRoute\Router` closure.
@@ -86,6 +88,7 @@ class ExampleMiddleware implements \NiceRoute\Contracts\Middleware
     }
 }
 
+// bind middleware to routes
 \NiceRoute\Router::registry(function(\NiceRoute\Route $route) {
     $route->put('/profile', function (\NiceRoute\Request $req) {
         return \NiceRoute\Response::json([
@@ -131,9 +134,9 @@ Router::registry(function(Route $route) {
 
 ### Using Controller
 
-We can using controllers to handle our request instead of a `\Closure` in route definition.
+We can use controllers to handle our requests instead of `\Closure` in routes definition.
 
-First we will specify a namespace prefix for our controller class,
+First we will specify a namespace prefix for our controller classes,
 then we use 'Controller@method' to specify the method to be called.
 
 ```php
