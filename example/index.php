@@ -16,11 +16,13 @@ use Example\Middleware\M5;
 
 Router::registry(function (Route $route) {
 
-    $route->get('/user', function () {
-        echo "user list\n";
-        return Response::json(['fuck']);
+    // basic route
+    $route->get('/', function () {
+        echo "home page\n";
+        return Response::json(['hi']);
     }, ['middleware' => [M1::class, M2::class]]);
 
+    // group route
     $route->group(['prefix' => '/api', 'middleware' => [M3::class]], function (Route $route) {
 
         $route->get('/user', function () {
@@ -41,10 +43,16 @@ Router::registry(function (Route $route) {
         });
     });
 
+    // placeholder
     $route->get('/article/{article_id}/comment/{comment_id}', function (Request $req) {
         return Response::json([
             'path_params' => $req->params(),
         ]);
+    });
+
+    // controller
+    $route->group(['namespace' => 'Example\Controllers'], function (Route $route) {
+        $route->get('/user', 'UserController@list');
     });
 });
 

@@ -68,8 +68,15 @@ class Router
      */
     private function handleRoute(Route $route)
     {
-        // handle middleware [..., m2, m1]
         $next = $route->handler;
+
+        // if is controller
+        if (!($next instanceof \Closure)) {
+            list($ctrlClass, $ctrlMethod) = explode('@', $next);
+            $next = [new $ctrlClass, $ctrlMethod];
+        }
+
+        // handle middleware [..., m2, m1]
         $middlewareStack = array_reverse($route->middlewareStack());
         foreach ($middlewareStack as $middleware) {
             $next = function (Request $req) use ($middleware, $next) {

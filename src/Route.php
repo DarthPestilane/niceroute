@@ -7,11 +7,11 @@ namespace NiceRoute;
  * Class Route
  * @package NiceRoute
  *
- * @method get(string $pattern, \Closure $handler, array $attributes = [])
- * @method post(string $pattern, \Closure $handler, array $attributes = [])
- * @method put(string $pattern, \Closure $handler, array $attributes = [])
- * @method patch(string $pattern, \Closure $handler, array $attributes = [])
- * @method delete(string $pattern, \Closure $handler, array $attributes = [])
+ * @method get(string $pattern, \Closure|string $handler, array $attributes = [])
+ * @method post(string $pattern, \Closure|string $handler, array $attributes = [])
+ * @method put(string $pattern, \Closure|string $handler, array $attributes = [])
+ * @method patch(string $pattern, \Closure|string $handler, array $attributes = [])
+ * @method delete(string $pattern, \Closure|string $handler, array $attributes = [])
  */
 class Route
 {
@@ -31,7 +31,7 @@ class Route
     public $regex;
 
     /**
-     * @var \Closure
+     * @var \Closure|string
      */
     public $handler;
 
@@ -49,6 +49,11 @@ class Route
      * @var array
      */
     private $prefixStack = [];
+
+    /**
+     * @var array
+     */
+    private $namespaceStack = [];
 
     /**
      * Get middleware stack.
@@ -73,6 +78,7 @@ class Route
         $handler($this->duplicate());
 
         array_pop($this->prefixStack);
+        array_pop($this->namespaceStack);
         $length = count($this->middlewareStack);
         for ($i = 0; $i < $length; $i++) {
             array_shift($this->middlewareStack);
@@ -84,10 +90,19 @@ class Route
         return clone $this;
     }
 
+    private function mergeNamespace(string $handler)
+    {
+        $handler = trim($handler, '\\');
+        $h = '';
+        foreach ($this->namespaceStack as $namespace) {
+            $h .= '\\' . trim($namespace, '\\');
+        }
+        return '\\' . trim($h . '\\' . $handler, '\\');
+    }
+
     private function mergePrefix(string $uri = '')
     {
         $uri = trim($uri, '/');
-
         $p = '';
         foreach ($this->prefixStack as $prefix) {
             $p .= '/' . trim($prefix, '/');
@@ -96,20 +111,40 @@ class Route
         return '/' . trim($p . '/' . $uri, '/');
     }
 
-    private function add(string $method, string $pattern, \Closure $handler, array $attributes = [])
+    /**
+     * Add route
+     *
+     * @param string $method
+     * @param string $pattern
+     * @param \Closure|string $handler
+     * @param array $attributes
+     */
+    private function add(string $method, string $pattern, $handler, array $attributes = [])
     {
         $this->method = $method;
         $this->pattern = $this->mergePrefix($pattern);
-        $this->handler = $handler;
         $this->name = $this->method . '-' . $this->pattern;
         $this->regex = $this->buildRegex();
+
+        // handle $handler
+        if ($handler instanceof \Closure) {
+            $this->handler = $handler;
+        } elseif (is_string($handler)) {
+            if (substr_count($handler, '@') !== 1) {
+                throw new \InvalidArgumentException('$handler must has one "@" char');
+            }
+            // merge with namespace
+            $this->handler = $this->mergeNamespace($handler);
+        } else {
+            throw new \InvalidArgumentException('$handler must be a string or \Closure');
+        }
+
 
         // parse $attributes
         $this->updateAttributes($attributes);
 
         // add route to router
         Router::addRoute($this->name, $this->duplicate());
-
 
         // restore $this for next call.
         $this->clean();
@@ -134,6 +169,16 @@ class Route
         $this->updateMiddlewareStack($attributes, $fromGroup);
         if ($fromGroup) {
             $this->updatePrefixStack($attributes);
+            $this->updateNamespaceStack($attributes);
+        }
+
+    }
+
+    private function updateNamespaceStack(array $attributes = [])
+    {
+        $namespace = $attributes['namespace'] ?? '';
+        if ($namespace !== '') {
+            $this->namespaceStack[] = $namespace;
         }
     }
 
