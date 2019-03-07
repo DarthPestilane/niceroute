@@ -52,6 +52,9 @@ Router::registry(function (Route $route) {
 
     // controller
     $route->group(['namespace' => 'Example\Controllers'], function (Route $route) {
+        $route->group(['namespace' => 'Admin', 'prefix' => '/admin'], function (Route $route) {
+            $route->get('/', 'AdminController@list');
+        });
         $route->get('/user', 'UserController@list');
     });
 });

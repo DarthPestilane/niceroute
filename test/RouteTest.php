@@ -56,6 +56,30 @@ final class RouteTest extends TestCase
         $this->assertEquals(['foo_id', 'bar_id'], $matches);
     }
 
+    public function testGroupNamespace()
+    {
+        $route = new Route();
+        $route->group(['namespace' => 'App'], function (Route $route) {
+            $route->get('/foo', 'Foo@bar');
+        });
+        /** @var Route $route */
+        $route = array_pop(Router::$routeMap);
+        $this->assertEquals('\App\Foo@bar', $route->handler);
+    }
+
+    public function testGroupNamespaceNested()
+    {
+        $route = new Route();
+        $route->group(['namespace' => 'App'], function (Route $route) {
+            $route->group(['namespace' => 'Foo'], function (Route $route) {
+                $route->get('/', 'Bar@baz');
+            });
+        });
+        /** @var Route $route */
+        $route = array_pop(Router::$routeMap);
+        $this->assertEquals('\App\Foo\Bar@baz', $route->handler);
+    }
+
     public function testGroupPrefix()
     {
         $route = new Route();
