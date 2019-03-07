@@ -12,6 +12,10 @@ Here you are!
 - Before/After Middleware supported
 - Group routes supported
 
+## Requirement
+
+- php: ^7.1.3
+
 ## Usage
 
 There are some example code in `example` directory.
