@@ -1,28 +1,37 @@
 {
-    "name": "darthpestilane/niceroute",
-    "authors": [
-        {
-            "name": "DarthPestline",
-            "email": "wangrui.superman@gmail.com"
-        }
-    ],
-    "require": {
-        "php": "^7.1.3",
-        "symfony/http-foundation": "^4.2",
-        "ext-json": "*"
-    },
-    "autoload": {
-        "psr-4": {
-            "NiceRoute\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Test\\": "test/",
-            "Example\\": "example/"
-        }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^8"
+  "name": "darthpestilane/niceroute",
+  "type": "library",
+  "description": "A simple and nice router for PHP",
+  "homepage": "https://github.com/DarthPestilane/niceroute",
+  "keywords": [
+    "restful",
+    "middleware",
+    "group-routing"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "DarthPestline",
+      "email": "wangrui.superman@gmail.com"
     }
+  ],
+  "require": {
+    "php": "^7.1.3",
+    "symfony/http-foundation": "^4.2",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "NiceRoute\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Test\\": "test/",
+      "Example\\": "example/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8"
+  }
 }
