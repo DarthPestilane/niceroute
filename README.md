@@ -16,6 +16,10 @@ Here you are!
 
 - php: ^7.1.3
 
+## Installation
+
+`composer require darthpestilane/niceroute`
+
 ## Usage
 
 There are some example code in `example` directory.
