@@ -7,15 +7,31 @@ use NiceRoute\Contracts\Middleware;
 class Router
 {
     /**
+     * Map of Routes
+     *
      * @var array
-     * map of Route
      */
     public static $routeMap = [];
 
     /**
+     * Incoming request
      * @var Request
      */
-    public $request;
+    private $request;
+
+    /**
+     * Custom 404 handler
+     *
+     * @var \Closure function(Request $req): Response
+     */
+    private static $notFoundHandler;
+
+    /**
+     * Custom 405 handler
+     *
+     * @var \Closure function(Request $req): Response
+     */
+    private static $notAllowedHandler;
 
     /**
      * Registry routes.
@@ -50,15 +66,39 @@ class Router
         $route = $router->match();
 
         if (is_int($route)) {
-            if ($route === 404) {
-                Response::create('not found', 404)->send();
+            if ($route === Response::HTTP_NOT_FOUND && static::$notFoundHandler !== null) {
+                $router->response((static::$notFoundHandler)($router->request), 404);
                 return;
             }
-            Response::create('method not allowed', 405)->send();
+            if ($route === Response::HTTP_METHOD_NOT_ALLOWED && static::$notAllowedHandler !== null) {
+                $router->response((static::$notAllowedHandler)($router->request), 405);
+                return;
+            }
+            Response::create('', $route)->send();
             return;
         }
 
         $router->handleRoute($route);
+    }
+
+    /**
+     * Set custom handler for 404 error
+     *
+     * @param \Closure $handler function(Request $req): Response
+     */
+    public static function setNotFoundHandler(\Closure $handler)
+    {
+        static::$notFoundHandler = $handler;
+    }
+
+    /**
+     * Set custom handler for 405 error
+     *
+     * @param \Closure $handler function(Request $req): Response
+     */
+    public static function setNotAllowedHandler(\Closure $handler)
+    {
+        static::$notAllowedHandler = $handler;
     }
 
     /**
@@ -90,17 +130,26 @@ class Router
                 return Response::create($resp);
             };
         }
-
-        $resp = $next($this->request);
-        if ($resp instanceof Response) {
-            $resp->send();
-            return;
-        }
-        Response::create($resp)->send();
+        $this->response($next($this->request));
     }
 
     /**
-     * To match route with requested uri.
+     * Perform a response with given content and http status code.
+     *
+     * @param mixed $content
+     * @param int $code
+     */
+    private function response($content = '', $code = 200)
+    {
+        if ($content instanceof Response) {
+            $content->send();
+            return;
+        }
+        Response::create($content, $code)->send();
+    }
+
+    /**
+     * Match route with incoming request.
      *
      * @return Route|int
      */

@@ -181,3 +181,33 @@ class UserController
     }
 }
 ```
+
+### Customize error handler
+
+```php
+<?php
+
+use NiceRoute\Router;
+use NiceRoute\Route;
+use NiceRoute\Request;
+use NiceRoute\Response;
+
+Router::registry(function(Route $route) {
+    // ...
+});
+
+Router::setNotFoundHandler(function(Request $req) {
+    return Response::json([
+        'path'    => $req->getPathInfo(),
+        'message' => 'Whoops... Not found.',
+    ], 404);
+});
+
+Router::setNotFoundHandler(function(Request $req) {
+    return Response::json([
+        'path'    => $req->getPathInfo(),
+        'method'  => $req->getMethod(),
+        'message' => 'Whoops... Method not allowed.',
+    ], 405);
+});
+```

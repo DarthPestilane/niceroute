@@ -59,4 +59,19 @@ Router::registry(function (Route $route) {
     });
 });
 
+Router::setNotFoundHandler(function (Request $req) {
+    return Response::json([
+        'path'    => $req->getPathInfo(),
+        'message' => 'Whoops... not found.',
+    ], 404);
+});
+
+Router::setNotAllowedHandler(function (Request $req) {
+    return Response::json([
+        'path'    => $req->getPathInfo(),
+        'method'  => $req->getMethod(),
+        'message' => 'Whoops... method not allowed.',
+    ], 405);
+});
+
 Router::run();
